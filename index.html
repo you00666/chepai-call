@@ -2,128 +2,112 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>移车通知</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>移车二维码</title>
 <style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: #fff;
-    color: #111;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-                 "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-  }
-  .wrap {
-    padding: 10px 16px 40px;
-  }
-  .plate {
-    width: 100%;
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #4b60c3;
-    color: #fff;
-    border: 2px solid #dce2ff;
-    border-radius: 9px;
-    box-shadow: 0 0 4px rgba(0,0,0,.35);
-    font-size: clamp(34px, 9vw, 48px);
-    font-weight: 600;
-    letter-spacing: 2px;
-  }
-  h1 {
-    margin: 20px 0 22px;
-    font-size: 30px;
-    line-height: 1.2;
-  }
-  .notice {
-    font-size: 25px;
-    font-weight: 600;
-    margin-bottom: 24px;
-  }
-  .info {
-    font-size: 23px;
-    font-weight: 600;
-    line-height: 1.8;
-    margin: 0 0 12px;
-  }
-  .call-btn {
-    margin-top: 10px;
-    min-width: 165px;
-    min-height: 58px;
-    padding: 12px 24px;
-    border: 1px solid #888;
-    border-radius: 10px;
-    background: #f7f7f7;
-    color: #111;
-    font-size: 22px;
-    font-weight: 700;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .call-btn:active {
-    transform: scale(.98);
-    background: #e9e9e9;
-  }
-  .hint {
-    margin-top: 18px;
-    color: #777;
-    font-size: 14px;
-  }
-  @media (max-width: 480px) {
-    .wrap { padding: 8px 14px 32px; }
-    .plate { min-height: 72px; font-size: 34px; }
-    h1 { font-size: 28px; margin-top: 18px; }
-    .notice { font-size: 22px; }
-    .info { font-size: 20px; }
-    .call-btn { width: 100%; font-size: 21px; }
-  }
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif}
+.container{max-width:620px;margin:auto;padding:14px}.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 4px 18px #00000012}
+.header{background:#4b60c3;color:#fff;text-align:center;padding:18px;border-radius:12px;margin-bottom:16px}.header h1{margin:0;font-size:28px}.header p{margin:7px 0 0;font-size:14px}
+label{display:block;font-weight:700;margin:14px 0 7px}input{width:100%;height:50px;border:1px solid #d4d7df;border-radius:9px;padding:0 14px;font-size:18px}
+.btn,.call{width:100%;height:52px;border:0;border-radius:10px;font-size:18px;font-weight:700;margin-top:18px}.primary,.call{background:#4b60c3;color:#fff}.secondary{background:#eef0f5;color:#222}
+#qrBox,#movePage{display:none}#qrcode{display:inline-flex;padding:12px;background:#fff;border:1px solid #eee;border-radius:10px;margin:12px auto}
+.url{background:#f6f7fa;border-radius:8px;padding:10px;word-break:break-all;font-size:13px;color:#555}.tip,.phoneHint{font-size:13px;color:#777;line-height:1.6;margin-top:12px}
+.plate{min-height:80px;display:flex;align-items:center;justify-content:center;background:#4b60c3;color:#fff;border:2px solid #dce2ff;border-radius:9px;box-shadow:0 0 4px #00000055;font-size:clamp(34px,9vw,48px);font-weight:600;letter-spacing:2px}
+.moveTitle{font-size:30px;margin:22px 0}.notice{font-size:22px;font-weight:600;margin-bottom:24px}.info{font-size:20px;font-weight:600;line-height:1.8;margin-bottom:10px}.back{text-align:center;margin-top:14px}.back a{color:#4b60c3;text-decoration:none}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="plate" id="plate">京A·12345</div>
+<div class="container">
 
-  <h1>挪车信息</h1>
+<section id="generatorPage">
+<div class="header"><h1>移车二维码</h1><p>输入车牌号和联系电话，生成专属二维码</p></div>
+<div class="card">
+<label>车牌号</label>
+<input id="plateInput" type="text" value="京A·12345" placeholder="例如：京A·12345">
+<label>车主联系电话</label>
+<input id="phoneInput" type="tel" placeholder="例如：13800138000">
+<button class="btn primary" onclick="generateQR()">生成移车二维码</button>
+</div>
+<div class="card" id="qrBox">
+<h2 style="margin:0">专属移车二维码</h2>
+<div id="qrPlate" style="font-size:18px;font-weight:700;margin-top:8px"></div>
+<div id="qrcode"></div>
+<div class="url" id="qrUrl"></div>
+<button class="btn primary" onclick="downloadQR()">下载二维码</button>
+<button class="btn secondary" onclick="openPreview()">预览扫码页面</button>
+<div class="tip">二维码中保存网页地址，扫码后点击“一键呼叫车主”即可联系车主。</div>
+</div>
+</section>
 
-  <div class="notice">临时停靠，请多关照</div>
+<section id="movePage">
+<div class="card">
+<div class="plate" id="movePlate"></div>
+<h1 class="moveTitle">挪车信息</h1>
+<div class="notice">临时停靠，请多关照</div>
+<div class="info" id="movePlateInfo"></div>
+<div class="info">联系电话：点击下方按钮联系车主</div>
+<button class="call" id="callBtn">📞 一键呼叫车主</button>
+<div class="phoneHint">为保护车主隐私，页面不直接显示完整电话号码。</div>
+<div class="back"><a href="./">返回二维码生成器</a></div>
+</div>
+</section>
 
-  <div class="info" id="plateInfo">车牌号：京A·12345</div>
-  <div class="info" id="phoneInfo">联系电话：未设置</div>
-
-  <button class="call-btn" id="callBtn">一键呼叫</button>
-  <div class="hint" id="hint"></div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-(function () {
-  // 支持通过网址参数设置车牌和手机号：
-  // 例如：index.html?plate=京A·12345&phone=13800138000
-  const params = new URLSearchParams(location.search);
-  const plate = params.get("plate") || "京A·12345";
-  const phone = params.get("phone") || "";
+const BASE_URL=location.origin+location.pathname;
 
-  document.getElementById("plate").textContent = plate;
-  document.getElementById("plateInfo").textContent = "车牌号：" + plate;
-
-  const phoneInfo = document.getElementById("phoneInfo");
-  const callBtn = document.getElementById("callBtn");
-  const hint = document.getElementById("hint");
-
-  if (phone) {
-    phoneInfo.textContent = "联系电话：" + phone;
-    callBtn.addEventListener("click", function () {
-      window.location.href = "tel:" + phone.replace(/[^\d+]/g, "");
-    });
-  } else {
-    phoneInfo.textContent = "联系电话：未设置";
-    callBtn.addEventListener("click", function () {
-      alert("暂未设置车主联系电话");
-    });
-    hint.textContent = "请在二维码链接中加入 phone 参数，即可启用一键呼叫。";
-  }
-})();
+function params(){
+  const p=new URLSearchParams(location.search);
+  return {plate:p.get("plate")||"",phone:p.get("phone")||""};
+}
+function makeUrl(){
+  const plate=document.getElementById("plateInput").value.trim();
+  const phone=document.getElementById("phoneInput").value.trim();
+  return BASE_URL+"?plate="+encodeURIComponent(plate)+"&phone="+encodeURIComponent(phone);
+}
+function generateQR(){
+  const plate=document.getElementById("plateInput").value.trim();
+  const phone=document.getElementById("phoneInput").value.trim();
+  if(!plate){alert("请输入车牌号");return}
+  if(!phone){alert("请输入车主联系电话");return}
+  document.getElementById("qrcode").innerHTML="";
+  new QRCode(document.getElementById("qrcode"),{text:makeUrl(),width:240,height:240,correctLevel:QRCode.CorrectLevel.M});
+  document.getElementById("qrPlate").textContent=plate;
+  document.getElementById("qrUrl").textContent=makeUrl();
+  document.getElementById("qrBox").style.display="block";
+  document.getElementById("qrBox").scrollIntoView({behavior:"smooth"});
+}
+function downloadQR(){
+  const canvas=document.querySelector("#qrcode canvas");
+  const img=document.querySelector("#qrcode img");
+  const data=canvas?canvas.toDataURL("image/png"):(img?img.src:"");
+  if(!data){alert("请先生成二维码");return}
+  const a=document.createElement("a");
+  a.href=data;a.download=(document.getElementById("plateInput").value||"移车")+"_移车二维码.png";a.click();
+}
+function openPreview(){
+  const {plate,phone}=params();
+  const p=document.getElementById("plateInput").value.trim();
+  const n=document.getElementById("phoneInput").value.trim();
+  if(!p||!n){alert("请先填写车牌号和联系电话");return}
+  window.open(BASE_URL+"?plate="+encodeURIComponent(p)+"&phone="+encodeURIComponent(n),"_blank");
+}
+function showMove(plate,phone){
+  document.getElementById("generatorPage").style.display="none";
+  document.getElementById("movePage").style.display="block";
+  document.getElementById("movePlate").textContent=plate;
+  document.getElementById("movePlateInfo").textContent="车牌号："+plate;
+  document.getElementById("callBtn").onclick=function(){
+    location.href="tel:"+phone.replace(/[^0-9+]/g,"");
+  };
+}
+window.onload=function(){
+  const x=params();
+  if(x.plate&&x.phone)showMove(x.plate,x.phone);
+  else document.getElementById("generatorPage").style.display="block";
+};
 </script>
 </body>
 </html>
