@@ -1,4 +1,4 @@
 # chepai-call
 简洁实用的移车二维码生成和打印
-https://github.com/you00666/chepai-call/
+you00666/chepai-call/
 
